@@ -95,7 +95,8 @@ for line in lines:
 
     opcode = AssemblyOpcodes.get(op, "0000")
     if check_literal(operand):
-        addr = next(x[1] for x in LiteralTable if x[0] == operand)
+        lit_entry = next((x for x in LiteralTable if x[0] == operand), None)
+        addr = str(lit_entry[1]).zfill(2) if lit_entry else "00"
     elif operand.startswith("REG"):
         addr = operand[-1].zfill(2)
     elif operand.isdigit():
