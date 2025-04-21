@@ -9,8 +9,8 @@ def lexer(code):
         elif token.isdigit():
             print(f"{token} is a number")
         elif token.isidentifier():
-            print(f"{token} is an identifier")
+            print(f"{token} is an valid identifier")
         else:
-            print(f"{token} is unknown")
+            print(f"{token} is not valid")
 
-lexer("int a = 10 + b;")
+lexer("int a = b + 1c;")
