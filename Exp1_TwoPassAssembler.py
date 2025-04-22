@@ -33,12 +33,17 @@ def assembler_pass_one(input_file):
 
     try:
         with open(input_file, "r") as f:
-            lines = [line.split("//")[0].strip() for line in f if line.strip() and not line.strip().startswith("//")]
+            # Read all lines and filter out comments and empty lines
+            lines = []
+            for line in f:
+                line = line.split("//")[0].strip()
+                if line and not line.startswith("//"):
+                    tokens = [t for t in line.split() if t]
+                    if tokens:
+                        lines.append(" ".join(tokens))
 
         if not lines:
-            raise Exception("Input file is empty")
-        if not lines[0]:
-            raise Exception("First line is empty")
+            raise Exception("Input file is empty or contains only comments")
         if lines[0] != "START":
             raise Exception("START statement missing")
     except FileNotFoundError:
