@@ -36,10 +36,13 @@ def assembler_pass_one(input_file):
             # Read all lines and filter out comments and empty lines
             lines = []
             for line in f:
-                line = line.split("//")[0].strip()
-                if line and not line.startswith("//"):
-                    tokens = [t for t in line.split() if t]
-                    if tokens:
+                # Remove comments and leading/trailing whitespace
+                cleaned_line = line.split("//")[0].strip()
+                # Skip empty lines and comment-only lines
+                if cleaned_line and not cleaned_line.startswith("//"):
+                    # Split by whitespace and filter out empty tokens
+                    tokens = [t.strip() for t in cleaned_line.split()]
+                    if tokens:  # Only add non-empty token lists
                         lines.append(" ".join(tokens))
 
         if not lines:
