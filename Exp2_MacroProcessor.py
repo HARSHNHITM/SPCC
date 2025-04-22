@@ -78,7 +78,7 @@ def display_table(table):
         print(' '.join(map(str, row)))
 
 if __name__ == "__main__":
-    mnt, ala, mdt, pass1_output = process_macros("input.txt")
+    mnt, ala, mdt, pass1_output = process_macros("macro_input.txt")
     pass2_output, ala_pass2 = expand_macros(pass1_output, mnt, mdt)
 
     print("Macro Name Table (MNT)")
