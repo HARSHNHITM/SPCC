@@ -31,13 +31,18 @@ def assembler_pass_one(input_file):
     stop_found = False
     end_found = False
 
-    with open(input_file, "r") as f:
-        lines = [line.split("//")[0].strip() for line in f if line.strip() and not line.strip().startswith("//")]
+    try:
+        with open(input_file, "r") as f:
+            lines = [line.split("//")[0].strip() for line in f if line.strip() and not line.strip().startswith("//")]
 
-    if not lines:
-        raise Exception("Input file is empty")
-    if lines[0] != "START":
-        raise Exception("START statement missing")
+        if not lines:
+            raise Exception("Input file is empty")
+        if not lines[0]:
+            raise Exception("First line is empty")
+        if lines[0] != "START":
+            raise Exception("START statement missing")
+    except FileNotFoundError:
+        raise Exception(f"Could not find input file: {input_file}")
 
     for line in lines[1:]:  # Skip START
         tokens = list(map(clean_token, line.split()))
