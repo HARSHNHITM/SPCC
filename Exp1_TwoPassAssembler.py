@@ -33,22 +33,26 @@ def assembler_pass_one(input_file):
 
     try:
         with open(input_file, "r") as f:
-            # Read all lines and filter out comments and empty lines
             lines = []
             for line in f:
-                # Remove comments and leading/trailing whitespace
-                cleaned_line = line.split("//")[0].strip()
-                # Skip empty lines and comment-only lines
-                if cleaned_line and not cleaned_line.startswith("//"):
-                    # Split by whitespace and filter out empty tokens
-                    tokens = [t.strip() for t in cleaned_line.split()]
-                    if tokens:  # Only add non-empty token lists
+                # Remove comments and clean whitespace
+                line = line.split("//")[0].strip()
+                # Skip empty lines or comment lines
+                if line and not line.startswith("//"):
+                    # Keep original tokens but clean them
+                    tokens = [token.strip() for token in line.split()]
+                    if tokens:  # Ensure we have valid tokens
                         lines.append(" ".join(tokens))
-
-        if not lines:
-            raise Exception("Input file is empty or contains only comments")
-        if lines[0] != "START":
-            raise Exception("START statement missing")
+            
+            # Validate basic structure
+            if not lines:
+                raise Exception("Input file is empty or contains only comments")
+            if len(lines) < 2:  # Need at least START and END
+                raise Exception("File must contain at least START and END")
+            if lines[0] != "START":
+                raise Exception("First non-comment line must be START")
+            if lines[-1] != "END":
+                raise Exception("Last non-comment line must be END")
     except FileNotFoundError:
         raise Exception(f"Could not find input file: {input_file}")
 
