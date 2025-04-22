@@ -1,14 +1,13 @@
-class Node:
-    def __init__(self, val, left=None, right=None):
-        self.val, self.left, self.right = val, left, right
+# Variable initialization
+a = 90
+b = 20
 
-def inorder(node):
-    if node:
-        if node.left: print("(", end="")
-        inorder(node.left)
-        print(node.val, end="")
-        inorder(node.right)
-        if node.right: print(")", end="")
+# Arithmetic operations
+c = a + b
+d = a * b
+e = a - b
 
-tree = Node('*', Node('+', Node('a'), Node('b')), Node('c'))
-inorder(tree)
+# Output
+print(f"Value of c: {c}")  
+print(f"Value of d: {d}")  
+print(f"Value of e: {e}")  

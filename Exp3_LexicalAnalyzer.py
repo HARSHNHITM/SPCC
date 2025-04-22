@@ -11,6 +11,6 @@ def lexer(code):
         elif token.isidentifier():
             print(f"{token} is an valid identifier")
         else:
-            print(f"{token} is not valid")
+            print(f"{token} is not valid identifier")
 
 lexer("int a = b + 1c;")

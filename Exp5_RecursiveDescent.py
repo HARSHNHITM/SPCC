@@ -1,26 +1,52 @@
-expr = input("Enter string: ")
+print("Recursive Descent Parsing For the following grammar:")
+print("E  -> T E'\nE' -> + T E' | ε\nT  -> F T'\nT' -> * F T' | ε\nF  -> (E) | i\n")
+
+s = list(input("Enter the string to be checked: "))
 i = 0
 
-def match(x):
+def match(a):
     global i
-    if i < len(expr) and expr[i] == x:
+    if i >= len(s):
+        return False
+    if s[i] == a:
         i += 1
         return True
     return False
 
 def F():
-    return match('i') or (match('(') and E() and match(')'))
+    global i
+    if match('('):
+        if E():
+            if match(')'):
+                return True
+        return False
+    elif match('i'):
+        return True
+    else:
+        return False
 
 def Tx():
-    return match('*') and F() and Tx() or True
+    if match('*'):
+        if F() and Tx():
+            return True
+        return False
+    return True  # ε
 
 def T():
     return F() and Tx()
 
 def Ex():
-    return match('+') and T() and Ex() or True
+    if match('+'):
+        if T() and Ex():
+            return True
+        return False
+    return True  # ε
 
 def E():
     return T() and Ex()
 
-print("Accepted" if E() and i == len(expr) else "Rejected")
+# Run the parser
+if E() and i == len(s):
+    print("String is accepted")
+else:
+    print("String is not accepted")
