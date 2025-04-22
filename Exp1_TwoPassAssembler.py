@@ -1,3 +1,4 @@
+
 assembly = [
     "START", "LAC A", "ADD B", "SAC C", "STP",
     "A DATA 5", "B DATA 10", "C DATA 0", "END"
@@ -20,12 +21,13 @@ opcodes = {"LAC": "0001", "ADD": "0011", "SAC": "0010", "STP": "1100"}
 for line in assembly:
     parts = line.split()
     if parts[0] in opcodes:
-        mc = f"{opcodes[parts[0]]} {symbol_table[parts[1]]['addr']}"
+        if len(parts) > 1:
+            mc = f"{opcodes[parts[0]]} {symbol_table[parts[1]]['addr']}"
+        else:
+            mc = f"{opcodes[parts[0]]} 00"
         machine_code.append(mc)
-    elif parts[0] in symbol_table:
+    elif parts[0] in symbol_table or parts[0] in ["START", "END"]:
         continue
-    elif parts[0] == "STP":
-        machine_code.append(f"{opcodes['STP']} 00")
 
 print("Machine Code:")
 for code in machine_code:
