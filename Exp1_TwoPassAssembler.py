@@ -1,4 +1,3 @@
-
 import sys
 import re
 
@@ -35,7 +34,9 @@ def assembler_pass_one(input_file):
     with open(input_file, "r") as f:
         lines = [line.split("//")[0].strip() for line in f if line.strip() and not line.strip().startswith("//")]
 
-    if not lines or lines[0] != "START":
+    if not lines:
+        raise Exception("Input file is empty")
+    if lines[0] != "START":
         raise Exception("START statement missing")
 
     for line in lines[1:]:  # Skip START
@@ -49,25 +50,29 @@ def assembler_pass_one(input_file):
 
         if len(tokens) >= 3 and tokens[0] in opcodes:
             raise Exception(f"Too many operands for {tokens[0]}")
+        elif len(tokens) == 1 and tokens[0] in ["LAC", "SAC", "ADD", "SUB", "BRZ", "BRN", "BRP", "INP", "DSP", "MUL", "DIV"]:
+            raise Exception(f"Missing operand for {tokens[0]}")
+        elif len(tokens) == 2 and tokens[1] in ["LAC", "SAC", "ADD", "SUB", "BRZ", "BRN", "BRP", "INP", "DSP", "MUL", "DIV"]:
+            raise Exception(f"Missing operand for {tokens[1]}")
 
         if not stop_found:
             for tok in tokens:
                 if is_literal(tok):
                     literal_table.append([tok, location_counter])
-            
+
             if len(tokens) >= 2 and is_valid_label(tokens[0], opcodes, symbol_table):
                 symbol_table.append([tokens[0], location_counter, None, "Label"])
-            
-            if tokens[-1] not in opcodes and is_valid_symbol(tokens[-1], tokens[-2] if len(tokens) > 1 else '', opcodes, symbol_table):
+
+            if len(tokens) > 0 and tokens[-1] not in opcodes and is_valid_symbol(tokens[-1], tokens[-2] if len(tokens) > 1 else '', opcodes, symbol_table):
                 symbol_table.append([tokens[-1], None, None, "Variable"])
-        
+
         elif tokens[0] != "STP":
             if tokens[0] not in variables:
                 variables.append(tokens[0])
                 declarations.append((tokens[0], tokens[2]))
             else:
                 raise Exception(f"Variable {tokens[0]} already defined")
-            
+
             try:
                 sym_idx = next(i for i, s in enumerate(symbol_table) if s[0] == tokens[0])
                 symbol_table[sym_idx][1] = location_counter
@@ -77,7 +82,7 @@ def assembler_pass_one(input_file):
 
         if tokens[0] == "STP":
             stop_found = True
-        
+
         location_counter += 1
 
     if not end_found:
@@ -89,9 +94,9 @@ def assembler_pass_one(input_file):
 
     return symbol_table, literal_table, declarations, assembly_opcodes
 
-def assembler_pass_two(input_file, symbol_table, literal_table, assembly_opcodes, output_file="Machine Code.txt"):
+def assembler_pass_two(input_file, symbol_table, literal_table, assembly_opcodes, output_file="Assembly Code Input.txt"):
     assembly_code = []
-    
+
     with open(input_file, "r") as f:
         lines = [line.split("//")[0].strip() for line in f if line.strip() and not line.strip().startswith("//")]
 
@@ -105,12 +110,12 @@ def assembler_pass_two(input_file, symbol_table, literal_table, assembly_opcodes
 
             if tokens[0] == "START":
                 continue
-            
+
             if tokens[0] == "END" or (len(tokens) == 3 and tokens[1] == "DATA"):
                 break
 
             code = ""  # Initialize code for each iteration
-            
+
             if tokens[0] == "STP":
                 code = f"00 {assembly_opcodes['STP']} 00 00 00"
             elif len(tokens) == 2 and tokens[1] == "CLA":
@@ -158,7 +163,7 @@ def assembler_pass_two(input_file, symbol_table, literal_table, assembly_opcodes
             if code:  # Only append and write if code was generated
                 assembly_code.append(code)
                 outfile.write(str(code) + "\n")
-                
+
     return assembly_code
 
 if __name__ == "__main__":
@@ -180,7 +185,7 @@ if __name__ == "__main__":
             print(f"{sym[0].ljust(16)}{str(sym[1]).ljust(12)}{str(sym[2]).ljust(10)}{sym[3].ljust(10)}")
         print("-----------------------\n")
 
-        print(">>> Data Table <<<\nVARIABLES      VALUE\n-------------------")
+        print(">>> Data Table <<<\nVARIABLES       VALUE\n-------------------")
         for dec in declarations:
             print(f"{dec[0].ljust(14)}{str(dec[1]).ljust(10)}")
         print("-------------------\n")
