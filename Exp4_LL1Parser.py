@@ -1,28 +1,46 @@
-
 def parse(input_str):
     stack = ['$', 'S']
     i = 0
-    print("Parsing:", input_str)
-    while stack[-1] != '$':
+    input_str += '$'  # End marker
+    max_steps = 100  # safety cap
+
+    steps = 0
+    while stack and steps < max_steps:
         top = stack.pop()
         curr = input_str[i] if i < len(input_str) else '$'
-        print(f"Stack: {stack}, Current: {curr}, Top: {top}")
+
+        # Debugging output
+        print(f"STACK: {stack} | CURRENT: {curr} | TOP: {top}")
+
         if top == curr:
             i += 1
-        elif top == 'S' and curr == 'a':
-            stack.extend(['B', 'a'])
-        elif top == 'S' and curr == 'b':
-            stack.append('b')
-        elif top == 'B' and curr == 'b':
-            stack.append('b')
+        elif top == 'S':
+            if curr == 'a':
+                stack += ['B', 'S']  # S → a S B
+            elif curr in ['b', '$']:
+                continue  # ε
+            else:
+                print("Rejected")
+                return
+        elif top == 'B':
+            if curr == 'b':
+                stack.append('b')  # B → b
+            else:
+                print("Rejected")
+                return
+        elif top == '$':
+            if curr == '$':
+                print("Accepted")
+                return
+            else:
+                print("Rejected")
+                return
         else:
             print("Rejected")
             return
-    if i == len(input_str):
-        print("Accepted")
-    else:
-        print("Rejected")
+        steps += 1
 
-# Get input from user
-input_str = input("Enter string to parse: ")
-parse(input_str)
+    print("Rejected (safety stop or invalid input)")
+
+# ✅ Test Case
+parse("aabbb")
