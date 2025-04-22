@@ -50,3 +50,5 @@ if E() and i == len(s):
     print("String is accepted")
 else:
     print("String is not accepted")
+    
+#i+i

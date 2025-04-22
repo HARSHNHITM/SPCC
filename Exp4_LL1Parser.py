@@ -44,3 +44,5 @@ if __name__ == '__main__':
     error_occurred = False
     user_input = input() + "\n"
     parser.parse(user_input)
+
+# input aabb

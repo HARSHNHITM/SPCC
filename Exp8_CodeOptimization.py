@@ -59,3 +59,4 @@ for op in pr:
         seen.add(key)
         print(f"{op.l}={op.r}")
 
+# input 5 a 9 b c+d e c+d f b+e r f
